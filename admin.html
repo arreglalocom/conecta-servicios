@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - ConectaServicios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f0f2f5; padding: 20px; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .header h1 { font-size: 24px; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 12px 24px; background: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        .tab.active { background: #667eea; color: white; }
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #667eea; color: white; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        td { padding: 12px; border-bottom: 1px solid #eee; }
+        .estado-pendiente { color: #f9a825; font-weight: bold; }
+        .estado-asignado { color: #43a047; font-weight: bold; }
+        .estado-completado { color: #1565c0; font-weight: bold; }
+        .btn { padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
+        .btn-whatsapp { background: #25d366; color: white; }
+        .btn-asignar { background: #667eea; color: white; }
+        .btn-completar { background: #43a047; color: white; }
+        .refresh { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #667eea; color: white; border: none; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
+        .badge-nuevo { background: #fff3e0; color: #e65100; }
+        .badge-verificado { background: #e8f5e9; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Panel de Administracion</h1>
+        <p>ConectaServicios - Los Teques</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab active" onclick="mostrarTab('pedidos')">Pedidos</button>
+        <button class="tab" onclick="mostrarTab('profesionales')">Profesionales</button>
+    </div>
+
+    <div id="tab-pedidos" class="card">
+        <h3 style="margin-bottom: 16px;">Pedidos Recientes</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Fecha</th><th>Cliente</th><th>Telefono</th>
+                        <th>Servicio</th><th>Zona</th><th>Presup.</th><th>Estado</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyPedidos"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="tab-profesionales" class="card" style="display:none;">
+        <h3 style="margin-bottom: 16px;">Profesionales Registrados</h3>
+        <div style="overflow-x: auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Registro</th><th>Nombre</th><th>Cedula</th>
+                        <th>Telefono</th><th>Servicios</th><th>Zona</th><th>Estado</th><th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyProfesionales"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <button class="refresh" onclick="cargarDatos()" title="Actualizar">↻</button>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/TU_URL_AQUI/exec';
+
+        function mostrarTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-pedidos').style.display = tab === 'pedidos' ? 'block' : 'none';
+            document.getElementById('tab-profesionales').style.display = tab === 'profesionales' ? 'block' : 'none';
+        }
+
+        async function cargarDatos() {
+            try {
+                const res = await fetch(API_URL + '?action=getPedidos');
+                const data = await res.json();
+                const tbody = document.getElementById('tbodyPedidos');
+                
+                tbody.innerHTML = data.pedidos.reverse().map(p => `
+                    <tr>
+                        <td>#${p.id}</td>
+                        <td>${new Date(p.fechaSolicitud).toLocaleDateString()}</td>
+                        <td><b>${p.nombre}</b></td>
+                        <td>
+                            <a href="https://wa.me/58${p.telefono.replace(/\D/g,'')}" target="_blank">
+                                <button class="btn btn-whatsapp">${p.telefono}</button>
+                            </a>
+                        </td>
+                        <td>${p.servicio}</td>
+                        <td>${p.zona}</td>
+                        <td>$${p.presupuesto || 'N/A'}</td>
+                        <td class="estado-${p.estado.toLowerCase()}">${p.estado}</td>
+                        <td>
+                            ${p.estado === 'Pendiente' 
+                                ? `<button class="btn btn-asignar" onclick="asignarPedido(${p.id})">Asignar</button>` 
+                                : `<button class="btn btn-completar" onclick="completarPedido(${p.id})">Completar</button>`
+                            }
+                        </td>
+                    </tr>
+                `).join('');
+            } catch(e) {
+                document.getElementById('tbodyPedidos').innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">Cargando...</td></tr>';
+            }
+
+            try {
+                const res = await fetch(API_URL + '?action=getProfesionales');
+                const data = await res.json();
+                const tbody = document.getElementById('tbodyProfesionales');
+                
+                tbody.innerHTML = data.profesionales.map(p => `
+                    <tr>
+                        <td>#${p.id}</td>
+                        <td>${new Date(p.fechaRegistro).toLocaleDateString()}</td>
+                        <td><b>${p.nombre}</b></td>
+                        <td>${p.cedula}</td>
+                        <td><a href="https://wa.me/58${p.telefono.replace(/\D/g,'')}" target="_blank">${p.telefono}</a></td>
+                        <td>${p.servicios}</td>
+                        <td>${p.zona}</td>
+                        <td><span class="badge ${p.estado.includes('verificacion') ? 'badge-nuevo' : 'badge-verificado'}">${p.estado}</span></td>
+                        <td><button class="btn btn-asignar">Ver perfil</button></td>
+                    </tr>
+                `).join('');
+            } catch(e) {
+                document.getElementById('tbodyProfesionales').innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">No hay profesionales registrados</td></tr>';
+            }
+        }
+
+        function asignarPedido(id) {
+            const profesional = prompt('Que profesional asignas? (Escribe el nombre)');
+            if (profesional) {
+                fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'actualizarEstado',
+                        id: id,
+                        estado: 'Asignado',
+                        profesional: profesional
+                    })
+                }).then(() => {
+                    alert('Pedido #' + id + ' asignado a ' + profesional);
+                    cargarDatos();
+                });
+            }
+        }
+
+        function completarPedido(id) {
+            if (confirm('Marcar el pedido #' + id + ' como completado?')) {
+                fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'actualizarEstado',
+                        id: id,
+                        estado: 'Completado'
+                    })
+                }).then(() => {
+                    alert('Pedido completado. Recuerda cobrar la comision del 15%');
+                    cargarDatos();
+                });
+            }
+        }
+
+        cargarDatos();
+        setInterval(cargarDatos, 30000);
+    </script>
+</body>
+</html>

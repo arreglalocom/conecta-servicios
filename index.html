@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConectaServicios - Los Teques</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        .logo { text-align: center; color: white; padding: 30px 0; }
+        .logo h1 { font-size: 28px; margin-bottom: 8px; }
+        .logo p { opacity: 0.9; font-size: 14px; }
+        .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+        .card h2 { color: #333; font-size: 20px; margin-bottom: 8px; }
+        .card p { color: #666; font-size: 14px; margin-bottom: 16px; }
+        label { display: block; color: #555; font-size: 13px; font-weight: 600; margin: 12px 0 6px; text-transform: uppercase; }
+        input, select, textarea { 
+            width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; 
+            font-size: 16px; transition: border-color 0.3s; 
+        }
+        input:focus, select:focus, textarea:focus { border-color: #667eea; outline: none; }
+        .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0; }
+        .service-item { 
+            background: #f5f5f5; padding: 14px 8px; border-radius: 10px; text-align: center; 
+            cursor: pointer; border: 2px solid transparent; transition: all 0.3s; font-size: 13px;
+        }
+        .service-item:hover { background: #e8e0ff; border-color: #667eea; }
+        .service-item.selected { background: #667eea; color: white; border-color: #667eea; }
+        .btn { 
+            width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; 
+            cursor: pointer; margin-top: 16px; transition: transform 0.2s;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .success { background: #e8f5e9; color: #2e7d32; padding: 16px; border-radius: 10px; text-align: center; display: none; }
+        .error { background: #ffebee; color: #c62828; padding: 16px; border-radius: 10px; text-align: center; display: none; }
+        .loading { display: none; text-align: center; color: #667eea; padding: 20px; }
+        .link-prof { text-align: center; margin-top: 20px; }
+        .link-prof a { color: white; text-decoration: underline; }
+        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-box { background: rgba(255,255,255,0.15); padding: 12px; border-radius: 10px; text-align: center; color: white; }
+        .stat-box .num { font-size: 24px; font-weight: bold; }
+        .stat-box .label { font-size: 11px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>ConectaServicios</h1>
+            <p>Profesionales verificados en Los Teques</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="num" id="statProfesionales">0</div>
+                <div class="label">Profesionales</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="statServicios">0</div>
+                <div class="label">Servicios</div>
+            </div>
+            <div class="stat-box">
+                <div class="num" id="statClientes">0</div>
+                <div class="label">Clientes</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Solicitar un Servicio</h2>
+            <p>Completa el formulario y te contactamos por WhatsApp</p>
+            
+            <div class="success" id="msgSuccess">
+                Solicitud enviada! Te contactaremos pronto.
+                <br><small>Tu pedido #<span id="pedidoId"></span></small>
+            </div>
+            <div class="error" id="msgError">Hubo un error. Intenta de nuevo.</div>
+            <div class="loading" id="loading">Enviando...</div>
+
+            <form id="pedidoForm">
+                <label>Tu nombre completo</label>
+                <input type="text" id="nombre" placeholder="Ej: Maria Gonzalez" required>
+
+                <label>Telefono (WhatsApp)</label>
+                <input type="tel" id="telefono" placeholder="Ej: 0412-1234567" required>
+
+                <label>Tipo de servicio</label>
+                <div class="service-grid">
+                    <div class="service-item" onclick="selectService(this, 'Plomeria')">Plomeria</div>
+                    <div class="service-item" onclick="selectService(this, 'Electricidad')">Electricidad</div>
+                    <div class="service-item" onclick="selectService(this, 'Pintura')">Pintura</div>
+                    <div class="service-item" onclick="selectService(this, 'Jardineria')">Jardineria</div>
+                    <div class="service-item" onclick="selectService(this, 'Clases')">Clases</div>
+                    <div class="service-item" onclick="selectService(this, 'Tecnico')">Tecnico</div>
+                </div>
+                <input type="hidden" id="servicio" required>
+
+                <label>Zona / Sector en Los Teques</label>
+                <input type="text" id="zona" placeholder="Ej: El Tambor, San Antonio..." required>
+
+                <label>Fecha y hora que necesitas el servicio</label>
+                <input type="datetime-local" id="fechaServicio" required>
+
+                <label>Describe lo que necesitas</label>
+                <textarea id="descripcion" rows="3" placeholder="Ej: Tengo una fuga en el bano principal..." required></textarea>
+
+                <label>Presupuesto estimado (USD, opcional)</label>
+                <input type="number" id="presupuesto" placeholder="Ej: 20" min="1">
+
+                <button type="submit" class="btn" id="btnEnviar">Enviar Solicitud</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Eres profesional?</h2>
+            <p>Registrate gratis y recibe clientes. Solo pagas 15% por servicio completado.</p>
+            <button class="btn" onclick="mostrarFormProfesional()" style="background: #43a047;">Registrarme como Profesional</button>
+            
+            <div id="formProfesional" style="display:none; margin-top: 16px;">
+                <label>Nombre completo</label>
+                <input type="text" id="profNombre" placeholder="Tu nombre">
+                <label>Cedula de identidad</label>
+                <input type="text" id="profCedula" placeholder="V-12345678">
+                <label>Telefono</label>
+                <input type="tel" id="profTelefono" placeholder="0412-1234567">
+                <label>Servicios que ofreces</label>
+                <input type="text" id="profServicios" placeholder="Ej: Plomeria, Electricidad">
+                <label>Zona donde trabajas</label>
+                <input type="text" id="profZona" placeholder="Ej: Los Teques, San Antonio">
+                <button class="btn" onclick="registrarProfesional()">Completar Registro</button>
+            </div>
+        </div>
+
+        <div class="link-prof">
+            <a href="admin.html">Panel de Administracion</a>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/TU_URL_AQUI/exec';
+        let servicioSeleccionado = '';
+
+        function selectService(element, servicio) {
+            document.querySelectorAll('.service-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            document.getElementById('servicio').value = servicio;
+            servicioSeleccionado = servicio;
+        }
+
+        document.getElementById('pedidoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (!servicioSeleccionado) {
+                alert('Por favor selecciona un tipo de servicio');
+                return;
+            }
+
+            const btn = document.getElementById('btnEnviar');
+            const loading = document.getElementById('loading');
+            const success = document.getElementById('msgSuccess');
+            const error = document.getElementById('msgError');
+
+            btn.disabled = true;
+            loading.style.display = 'block';
+            success.style.display = 'none';
+            error.style.display = 'none';
+
+            const datos = {
+                action: 'crearPedido',
+                nombre: document.getElementById('nombre').value,
+                telefono: document.getElementById('telefono').value,
+                servicio: servicioSeleccionado,
+                zona: document.getElementById('zona').value,
+                fechaServicio: document.getElementById('fechaServicio').value,
+                descripcion: document.getElementById('descripcion').value,
+                presupuesto: document.getElementById('presupuesto').value
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(datos)
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('pedidoId').textContent = result.id;
+                    success.style.display = 'block';
+                    this.reset();
+                    document.querySelectorAll('.service-item').forEach(el => el.classList.remove('selected'));
+                    servicioSeleccionado = '';
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch(err) {
+                let pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                pedidos.push({...datos, fechaSolicitud: new Date().toLocaleString(), id: 'local-' + Date.now()});
+                localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                success.innerHTML = 'Solicitud guardada (modo offline). Te contactaremos pronto.';
+                success.style.display = 'block';
+                this.reset();
+            } finally {
+                btn.disabled = false;
+                loading.style.display = 'none';
+            }
+        });
+
+        function mostrarFormProfesional() {
+            document.getElementById('formProfesional').style.display = 'block';
+        }
+
+        async function registrarProfesional() {
+            const datos = {
+                action: 'registrarProfesional',
+                nombre: document.getElementById('profNombre').value,
+                cedula: document.getElementById('profCedula').value,
+                telefono: document.getElementById('profTelefono').value,
+                servicios: document.getElementById('profServicios').value,
+                zona: document.getElementById('profZona').value
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(datos)
+                });
+                const result = await response.json();
+                alert(result.mensaje);
+                document.getElementById('formProfesional').style.display = 'none';
+            } catch(err) {
+                alert('Error al registrar. Intenta mas tarde.');
+            }
+        }
+
+        async function cargarStats() {
+            try {
+                const response = await fetch(API_URL + '?action=getPedidos');
+                const data = await response.json();
+                document.getElementById('statServicios').textContent = data.pedidos.length;
+                document.getElementById('statClientes').textContent = new Set(data.pedidos.map(p => p.telefono)).size;
+            } catch(e) {
+                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                document.getElementById('statServicios').textContent = pedidos.length;
+            }
+            
+            try {
+                const response = await fetch(API_URL + '?action=getProfesionales');
+                const data = await response.json();
+                document.getElementById('statProfesionales').textContent = data.profesionales.length;
+            } catch(e) {
+                document.getElementById('statProfesionales').textContent = '0';
+            }
+        }
+
+        cargarStats();
+    </script>
+</body>
+</html>
