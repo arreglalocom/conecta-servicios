@@ -5,68 +5,370 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - ConectaServicios</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #f0f2f5; padding: 20px; }
-        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
-        .header h1 { font-size: 24px; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab { padding: 12px 24px; background: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
-        .tab.active { background: #667eea; color: white; }
-        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th { background: #667eea; color: white; padding: 12px; text-align: left; font-size: 12px; text-transform: uppercase; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .estado-pendiente { color: #f9a825; font-weight: bold; }
-        .estado-asignado { color: #43a047; font-weight: bold; }
-        .estado-completado { color: #1565c0; font-weight: bold; }
-        .btn { padding: 6px 14px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; }
-        .btn-whatsapp { background: #25d366; color: white; }
-        .btn-asignar { background: #667eea; color: white; }
-        .btn-completar { background: #43a047; color: white; }
-        .refresh { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; border-radius: 50%; background: #667eea; color: white; border: none; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .badge-nuevo { background: #fff3e0; color: #e65100; }
-        .badge-verificado { background: #e8f5e9; color: #2e7d32; }
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E85A2B;
+            --secondary: #004E89;
+            --accent: #1A659E;
+            --success: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --dark: #1A1A2E;
+            --gray: #6C757D;
+            --light-gray: #F8F9FA;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+            --radius: 16px;
+            --radius-sm: 8px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, var(--dark) 0%, #16213E 50%, var(--secondary) 100%); 
+            min-height: 100vh; 
+            color: var(--dark);
+            padding: 20px;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header { 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: var(--white); 
+            padding: 30px; 
+            border-radius: var(--radius); 
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-lg);
+        }
+        .header h1 { 
+            font-size: 28px; 
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+        .header p { 
+            opacity: 0.9; 
+            font-size: 15px;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .stat-card .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        .stat-card .num {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .tabs { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 20px; 
+        }
+        .tab { 
+            padding: 14px 28px; 
+            background: rgba(255,255,255,0.1); 
+            border: none; 
+            border-radius: var(--radius); 
+            cursor: pointer; 
+            font-weight: 700;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+        .tab:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .tab.active { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+        
+        .card { 
+            background: var(--white); 
+            border-radius: var(--radius); 
+            padding: 24px; 
+            margin-bottom: 20px; 
+            box-shadow: var(--shadow);
+        }
+        .card h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 14px; 
+        }
+        th { 
+            background: var(--light-gray); 
+            color: var(--dark); 
+            padding: 14px 12px; 
+            text-align: left; 
+            font-size: 12px; 
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        td { 
+            padding: 14px 12px; 
+            border-bottom: 1px solid #E9ECEF; 
+            vertical-align: middle;
+        }
+        tr:hover {
+            background: var(--light-gray);
+        }
+        
+        .badge { 
+            padding: 6px 14px; 
+            border-radius: 20px; 
+            font-size: 12px; 
+            font-weight: 700;
+            display: inline-block;
+        }
+        .badge-pendiente { background: #FFF3E0; color: #E65100; }
+        .badge-asignado { background: #E8F5E9; color: #2E7D32; }
+        .badge-completado { background: #E3F2FD; color: #1565C0; }
+        .badge-nuevo { background: #FFF3E0; color: #E65100; }
+        .badge-verificado { background: #E8F5E9; color: #2E7D32; }
+        
+        .btn { 
+            padding: 8px 16px; 
+            border: none; 
+            border-radius: var(--radius-sm); 
+            cursor: pointer; 
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .btn-whatsapp { 
+            background: #25D366; 
+            color: white; 
+        }
+        .btn-whatsapp:hover {
+            background: #128C7E;
+        }
+        .btn-asignar { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; 
+        }
+        .btn-asignar:hover {
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+        .btn-completar { 
+            background: linear-gradient(135deg, var(--success), #27AE60); 
+            color: white; 
+        }
+        .btn-ver { 
+            background: var(--light-gray); 
+            color: var(--dark); 
+        }
+        
+        .refresh { 
+            position: fixed; 
+            bottom: 24px; 
+            right: 24px; 
+            width: 60px; 
+            height: 60px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: white; 
+            border: none; 
+            font-size: 24px; 
+            cursor: pointer; 
+            box-shadow: 0 8px 25px rgba(255,107,53,0.4);
+            transition: all 0.3s;
+        }
+        .refresh:hover {
+            transform: rotate(180deg) scale(1.1);
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .filter-bar input, .filter-bar select {
+            padding: 10px 16px;
+            border: 2px solid #E9ECEF;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            background: var(--white);
+        }
+        .filter-bar input:focus, .filter-bar select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray);
+        }
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+        
+        @media (max-width: 768px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .tabs {
+                overflow-x: auto;
+            }
+            table {
+                font-size: 12px;
+            }
+            th, td {
+                padding: 10px 8px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Panel de Administracion</h1>
-        <p>ConectaServicios - Los Teques</p>
-    </div>
-
-    <div class="tabs">
-        <button class="tab active" onclick="mostrarTab('pedidos')">Pedidos</button>
-        <button class="tab" onclick="mostrarTab('profesionales')">Profesionales</button>
-    </div>
-
-    <div id="tab-pedidos" class="card">
-        <h3 style="margin-bottom: 16px;">Pedidos Recientes</h3>
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th><th>Fecha</th><th>Cliente</th><th>Telefono</th>
-                        <th>Servicio</th><th>Zona</th><th>Presup.</th><th>Estado</th><th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyPedidos"></tbody>
-            </table>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 Panel de Administracion</h1>
+            <p>ConectaServicios - Los Teques, Estado Miranda</p>
         </div>
-    </div>
+        
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="icon">📋</div>
+                <div class="num" id="statPedidos">0</div>
+                <div class="label">Pedidos</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">👷</div>
+                <div class="num" id="statProfesionales">0</div>
+                <div class="label">Profesionales</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">👤</div>
+                <div class="num" id="statClientes">0</div>
+                <div class="label">Clientes</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">💰</div>
+                <div class="num" id="statIngresos">0$</div>
+                <div class="label">Comisiones</div>
+            </div>
+        </div>
 
-    <div id="tab-profesionales" class="card" style="display:none;">
-        <h3 style="margin-bottom: 16px;">Profesionales Registrados</h3>
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th><th>Registro</th><th>Nombre</th><th>Cedula</th>
-                        <th>Telefono</th><th>Servicios</th><th>Zona</th><th>Estado</th><th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyProfesionales"></tbody>
-            </table>
+        <div class="tabs">
+            <button class="tab active" onclick="mostrarTab('pedidos')" id="tab-pedidos">📋 Pedidos</button>
+            <button class="tab" onclick="mostrarTab('profesionales')" id="tab-profesionales">👷 Profesionales</button>
+            <button class="tab" onclick="mostrarTab('clientes')" id="tab-clientes">👤 Clientes</button>
+        </div>
+
+        <div id="tab-content-pedidos">
+            <div class="card">
+                <div class="filter-bar">
+                    <input type="text" id="filtroPedido" placeholder="Buscar pedido..." onkeyup="filtrarPedidos()">
+                    <select id="filtroEstado" onchange="filtrarPedidos()">
+                        <option value="">Todos los estados</option>
+                        <option value="PENDIENTE">Pendiente</option>
+                        <option value="ASIGNADO">Asignado</option>
+                        <option value="COMPLETADO">Completado</option>
+                    </select>
+                </div>
+                <h3>Pedidos Recientes</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Fecha</th>
+                                <th>Cliente</th>
+                                <th>Telefono</th>
+                                <th>Servicio</th>
+                                <th>Zona</th>
+                                <th>Presup.</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyPedidos"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-content-profesionales" style="display:none;">
+            <div class="card">
+                <h3>Profesionales Registrados</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Registro</th>
+                                <th>Nombre</th>
+                                <th>Cedula</th>
+                                <th>Telefono</th>
+                                <th>Servicios</th>
+                                <th>Zona</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyProfesionales"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div id="tab-content-clientes" style="display:none;">
+            <div class="card">
+                <h3>Clientes Registrados</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cedula</th>
+                                <th>Telefono</th>
+                                <th>Email</th>
+                                <th>Zona</th>
+                                <th>Registro</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyClientes"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -74,100 +376,206 @@
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyz7ab-3wWH2qDfLjyS-d9e7aNdJMlsClXtVYYFHGsrGXLmc0oxV1I1N42pYqiMhZCOTQ/exec';
+        
+        let todosLosPedidos = [];
+        let todosLosProfesionales = [];
 
         function mostrarTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('tab-pedidos').style.display = tab === 'pedidos' ? 'block' : 'none';
-            document.getElementById('tab-profesionales').style.display = tab === 'profesionales' ? 'block' : 'none';
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            document.getElementById('tab-content-pedidos').style.display = tab === 'pedidos' ? 'block' : 'none';
+            document.getElementById('tab-content-profesionales').style.display = tab === 'profesionales' ? 'block' : 'none';
+            document.getElementById('tab-content-clientes').style.display = tab === 'clientes' ? 'block' : 'none';
         }
 
-        async function cargarDatos() {
-            try {
-                const res = await fetch(API_URL + '?action=getPedidos');
-                const data = await res.json();
-                const tbody = document.getElementById('tbodyPedidos');
-                
-                tbody.innerHTML = data.pedidos.reverse().map(p => `
-                    <tr>
-                        <td>#${p.id}</td>
-                        <td>${new Date(p.fechaSolicitud).toLocaleDateString()}</td>
-                        <td><b>${p.nombre}</b></td>
-                        <td>
-                            <a href="https://wa.me/58${p.telefono.replace(/\D/g,'')}" target="_blank">
-                                <button class="btn btn-whatsapp">${p.telefono}</button>
-                            </a>
-                        </td>
-                        <td>${p.servicio}</td>
-                        <td>${p.zona}</td>
-                        <td>$${p.presupuesto || 'N/A'}</td>
-                        <td class="estado-${p.estado.toLowerCase()}">${p.estado}</td>
-                        <td>
-                            ${p.estado === 'Pendiente' 
-                                ? `<button class="btn btn-asignar" onclick="asignarPedido(${p.id})">Asignar</button>` 
-                                : `<button class="btn btn-completar" onclick="completarPedido(${p.id})">Completar</button>`
-                            }
-                        </td>
-                    </tr>
-                `).join('');
-            } catch(e) {
-                document.getElementById('tbodyPedidos').innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">Cargando...</td></tr>';
-            }
+        function cargarDatos() {
+            cargarPedidos();
+            cargarProfesionales();
+            cargarClientes();
+            cargarStats();
+        }
+        
+        function cargarStats() {
+            const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+            document.getElementById('statPedidos').textContent = pedidos.length;
+            
+            const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+            document.getElementById('statClientes').textContent = clientes.length;
+            
+            let ingresos = 0;
+            pedidos.forEach(p => {
+                if (p.presupuesto) {
+                    ingresos += parseFloat(p.presupuesto) * 0.15;
+                }
+            });
+            document.getElementById('statIngresos').textContent = ingresos.toFixed(0) + '$';
+        }
 
-            try {
-                const res = await fetch(API_URL + '?action=getProfesionales');
-                const data = await res.json();
-                const tbody = document.getElementById('tbodyProfesionales');
-                
-                tbody.innerHTML = data.profesionales.map(p => `
-                    <tr>
-                        <td>#${p.id}</td>
-                        <td>${new Date(p.fechaRegistro).toLocaleDateString()}</td>
-                        <td><b>${p.nombre}</b></td>
-                        <td>${p.cedula}</td>
-                        <td><a href="https://wa.me/58${p.telefono.replace(/\D/g,'')}" target="_blank">${p.telefono}</a></td>
-                        <td>${p.servicios}</td>
-                        <td>${p.zona}</td>
-                        <td><span class="badge ${p.estado.includes('verificacion') ? 'badge-nuevo' : 'badge-verificado'}">${p.estado}</span></td>
-                        <td><button class="btn btn-asignar">Ver perfil</button></td>
-                    </tr>
-                `).join('');
-            } catch(e) {
-                document.getElementById('tbodyProfesionales').innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;">No hay profesionales registrados</td></tr>';
+        function cargarPedidos() {
+            const pedidosLocal = JSON.parse(localStorage.getItem('pedidos') || '[]');
+            
+            if (pedidosLocal.length > 0) {
+                mostrarPedidos(pedidosLocal);
+            } else {
+                try {
+                    var script = document.createElement('script');
+                    script.src = API_URL + '?action=getPedidos&callback=mostrarPedidos';
+                    document.head.appendChild(script);
+                } catch(e) {
+                    document.getElementById('tbodyPedidos').innerHTML = '<tr><td colspan="9" class="empty-state"><div class="icon">📭</div><p>No hay pedidos registrados</p></td></tr>';
+                }
             }
+        }
+        
+        function mostrarPedidos(data) {
+            if (data.pedidos) {
+                todosLosPedidos = data.pedidos;
+            } else {
+                todosLosPedidos = data;
+            }
+            
+            filtrarPedidos();
+        }
+        
+        function filtrarPedidos() {
+            const filtroTexto = document.getElementById('filtroPedido').value.toLowerCase();
+            const filtroEstado = document.getElementById('filtroEstado').value;
+            
+            let pedidos = todosLosPedidos;
+            
+            if (filtroTexto) {
+                pedidos = pedidos.filter(p => 
+                    (p.nombre && p.nombre.toLowerCase().includes(filtroTexto)) ||
+                    (p.servicio && p.servicio.toLowerCase().includes(filtroTexto)) ||
+                    (p.zona && p.zona.toLowerCase().includes(filtroTexto))
+                );
+            }
+            
+            if (filtroEstado) {
+                pedidos = pedidos.filter(p => p.estado === filtroEstado);
+            }
+            
+            const tbody = document.getElementById('tbodyPedidos');
+            
+            if (pedidos.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--gray);"><div style="font-size:48px;margin-bottom:16px;">📭</div>No hay pedidos que coincidan</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = pedidos.reverse().map(p => `
+                <tr>
+                    <td><strong>#${p.id || 'N/A'}</strong></td>
+                    <td>${p.fechaSolicitud || p.fecha || '-'}</td>
+                    <td><b>${p.nombre || '-'}</b></td>
+                    <td>
+                        <a href="https://wa.me/58${(p.telefono || '').replace(/\D/g,'')}" target="_blank" style="text-decoration:none;">
+                            <button class="btn btn-whatsapp">📱 ${p.telefono || '-'}</button>
+                        </a>
+                    </td>
+                    <td><span style="background:#E3F2FD;color:#1565C0;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;">${p.servicio || '-'}</span></td>
+                    <td>${p.zona || '-'}</td>
+                    <td><strong>$${p.presupuesto || 'N/A'}</strong></td>
+                    <td><span class="badge badge-${(p.estado || 'pendiente').toLowerCase()}">${p.estado || 'PENDIENTE'}</span></td>
+                    <td>
+                        ${(p.estado || 'PENDIENTE') === 'PENDIENTE' 
+                            ? `<button class="btn btn-asignar" onclick="asignarPedido(${p.id})">Asignar</button>` 
+                            : `<button class="btn btn-completar" onclick="completarPedido(${p.id})">Completar</button>`
+                        }
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function cargarProfesionales() {
+            try {
+                var script = document.createElement('script');
+                script.src = API_URL + '?action=getProfesionales&callback=mostrarProfesionales';
+                document.head.appendChild(script);
+            } catch(e) {
+                document.getElementById('tbodyProfesionales').innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--gray);"><div style="font-size:48px;margin-bottom:16px;">👷</div>No hay profesionales registrados</td></tr>';
+            }
+        }
+        
+        function mostrarProfesionales(data) {
+            if (data.profesionales) {
+                todosLosProfesionales = data.profesionales;
+                document.getElementById('statProfesionales').textContent = data.profesionales.length;
+            } else {
+                todosLosProfesionales = [];
+            }
+            
+            const tbody = document.getElementById('tbodyProfesionales');
+            
+            if (todosLosProfesionales.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--gray);"><div style="font-size:48px;margin-bottom:16px;">👷</div>No hay profesionales registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = todosLosProfesionales.map(p => `
+                <tr>
+                    <td><strong>#${p.id}</strong></td>
+                    <td>${p.fechaRegistro || '-'}</td>
+                    <td><b>${p.nombre}</b></td>
+                    <td>${p.cedula}</td>
+                    <td><a href="https://wa.me/58${(p.telefono || '').replace(/\D/g,'')}" target="_blank" style="color:var(--secondary);text-decoration:none;font-weight:600;">${p.telefono}</a></td>
+                    <td><span style="background:#E8F5E9;color:#2E7D32;padding:4px 10px;border-radius:20px;font-size:12px;">${p.servicios}</span></td>
+                    <td>${p.zona}</td>
+                    <td><span class="badge badge-${p.estado.includes('verificacion') ? 'nuevo' : 'verificado'}">${p.estado}</span></td>
+                    <td><button class="btn btn-ver">Ver perfil</button></td>
+                </tr>
+            `).join('');
+        }
+        
+        function cargarClientes() {
+            const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+            const tbody = document.getElementById('tbodyClientes');
+            
+            if (clientes.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray);"><div style="font-size:48px;margin-bottom:16px;">👤</div>No hay clientes registrados</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = clientes.map(c => `
+                <tr>
+                    <td><b>${c.nombre}</b></td>
+                    <td>${c.cedula}</td>
+                    <td><a href="https://wa.me/58${(c.telefono || '').replace(/\D/g,'')}" target="_blank" style="color:var(--secondary);text-decoration:none;font-weight:600;">${c.telefono}</a></td>
+                    <td>${c.email || '-'}</td>
+                    <td>${c.zona}</td>
+                    <td>${c.fechaRegistro || '-'}</td>
+                </tr>
+            `).join('');
         }
 
         function asignarPedido(id) {
             const profesional = prompt('Que profesional asignas? (Escribe el nombre)');
             if (profesional) {
-                fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'actualizarEstado',
-                        id: id,
-                        estado: 'Asignado',
-                        profesional: profesional
-                    })
-                }).then(() => {
-                    alert('Pedido #' + id + ' asignado a ' + profesional);
-                    cargarDatos();
-                });
+                let pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                const pedido = pedidos.find(p => p.id === id || p.id === 'local-' + id);
+                if (pedido) {
+                    pedido.estado = 'ASIGNADO';
+                    pedido.profesionalAsignado = profesional;
+                    localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                }
+                
+                alert('Pedido #' + id + ' asignado a ' + profesional);
+                cargarPedidos();
             }
         }
 
         function completarPedido(id) {
             if (confirm('Marcar el pedido #' + id + ' como completado?')) {
-                fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'actualizarEstado',
-                        id: id,
-                        estado: 'Completado'
-                    })
-                }).then(() => {
-                    alert('Pedido completado. Recuerda cobrar la comision del 15%');
-                    cargarDatos();
-                });
+                let pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+                const pedido = pedidos.find(p => p.id === id || p.id === 'local-' + id);
+                if (pedido) {
+                    pedido.estado = 'COMPLETADO';
+                    localStorage.setItem('pedidos', JSON.stringify(pedidos));
+                }
+                
+                alert('Pedido completado. Recuerda cobrar la comision del 15%');
+                cargarPedidos();
+                cargarStats();
             }
         }
 
