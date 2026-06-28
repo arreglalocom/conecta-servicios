@@ -5,51 +5,363 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ConectaServicios - Los Teques</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
-        .logo { text-align: center; color: white; padding: 30px 0; }
-        .logo h1 { font-size: 28px; margin-bottom: 8px; }
-        .logo p { opacity: 0.9; font-size: 14px; }
-        .card { background: white; border-radius: 16px; padding: 24px; margin-bottom: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .card h2 { color: #333; font-size: 20px; margin-bottom: 8px; }
-        .card p { color: #666; font-size: 14px; margin-bottom: 16px; }
-        label { display: block; color: #555; font-size: 13px; font-weight: 600; margin: 12px 0 6px; text-transform: uppercase; }
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E85A2B;
+            --secondary: #004E89;
+            --accent: #1A659E;
+            --success: #2ECC71;
+            --warning: #F39C12;
+            --danger: #E74C3C;
+            --dark: #1A1A2E;
+            --gray: #6C757D;
+            --light-gray: #F8F9FA;
+            --white: #FFFFFF;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.15);
+            --radius: 16px;
+            --radius-sm: 8px;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        
+        body { 
+            background: linear-gradient(135deg, var(--dark) 0%, #16213E 50%, var(--secondary) 100%); 
+            min-height: 100vh; 
+            color: var(--dark);
+        }
+        
+        .container { max-width: 480px; margin: 0 auto; padding: 20px; }
+        
+        .header { 
+            text-align: center; 
+            color: var(--white); 
+            padding: 40px 0 30px; 
+        }
+        .header .logo-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 40px;
+            box-shadow: 0 8px 30px rgba(255,107,53,0.4);
+        }
+        .header h1 { 
+            font-size: 32px; 
+            font-weight: 800;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        .header p { 
+            opacity: 0.85; 
+            font-size: 15px;
+            font-weight: 400;
+        }
+        
+        .stats { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 12px; 
+            margin-bottom: 24px; 
+        }
+        .stat-box { 
+            background: rgba(255,255,255,0.1); 
+            backdrop-filter: blur(10px);
+            padding: 16px 8px; 
+            border-radius: var(--radius); 
+            text-align: center; 
+            color: var(--white);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .stat-box .num { 
+            font-size: 28px; 
+            font-weight: 800;
+            color: var(--primary);
+        }
+        .stat-box .label { 
+            font-size: 11px; 
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+        }
+        
+        .card { 
+            background: var(--white); 
+            border-radius: var(--radius); 
+            padding: 28px; 
+            margin-bottom: 20px; 
+            box-shadow: var(--shadow-lg);
+        }
+        .card h2 { 
+            color: var(--dark); 
+            font-size: 22px; 
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .card p { 
+            color: var(--gray); 
+            font-size: 14px; 
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        label { 
+            display: block; 
+            color: var(--dark); 
+            font-size: 13px; 
+            font-weight: 600; 
+            margin: 16px 0 8px;
+        }
+        
         input, select, textarea { 
-            width: 100%; padding: 14px; border: 2px solid #e0e0e0; border-radius: 10px; 
-            font-size: 16px; transition: border-color 0.3s; 
+            width: 100%; 
+            padding: 14px 16px; 
+            border: 2px solid #E9ECEF; 
+            border-radius: var(--radius-sm); 
+            font-size: 16px; 
+            transition: all 0.3s;
+            background: var(--light-gray);
         }
-        input:focus, select:focus, textarea:focus { border-color: #667eea; outline: none; }
-        .service-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 12px 0; }
+        input:focus, select:focus, textarea:focus { 
+            border-color: var(--primary); 
+            background: var(--white);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255,107,53,0.1);
+        }
+        
+        .service-grid { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 10px; 
+            margin: 12px 0; 
+        }
         .service-item { 
-            background: #f5f5f5; padding: 14px 8px; border-radius: 10px; text-align: center; 
-            cursor: pointer; border: 2px solid transparent; transition: all 0.3s; font-size: 13px;
+            background: var(--light-gray); 
+            padding: 16px 8px; 
+            border-radius: var(--radius-sm); 
+            text-align: center; 
+            cursor: pointer; 
+            border: 2px solid transparent; 
+            transition: all 0.3s; 
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray);
         }
-        .service-item:hover { background: #e8e0ff; border-color: #667eea; }
-        .service-item.selected { background: #667eea; color: white; border-color: #667eea; }
+        .service-item:hover { 
+            background: #FFF0EB; 
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .service-item.selected { 
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+            color: var(--white); 
+            border-color: var(--primary);
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+        
         .btn { 
-            width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-            color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; 
-            cursor: pointer; margin-top: 16px; transition: transform 0.2s;
+            width: 100%; 
+            padding: 16px; 
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); 
+            color: var(--white); 
+            border: none; 
+            border-radius: var(--radius-sm); 
+            font-size: 16px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin-top: 20px; 
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .btn:hover { transform: translateY(-2px); }
-        .btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-        .success { background: #e8f5e9; color: #2e7d32; padding: 16px; border-radius: 10px; text-align: center; display: none; }
-        .error { background: #ffebee; color: #c62828; padding: 16px; border-radius: 10px; text-align: center; display: none; }
-        .loading { display: none; text-align: center; color: #667eea; padding: 20px; }
-        .link-prof { text-align: center; margin-top: 20px; }
-        .link-prof a { color: white; text-decoration: underline; }
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-        .stat-box { background: rgba(255,255,255,0.15); padding: 12px; border-radius: 10px; text-align: center; color: white; }
-        .stat-box .num { font-size: 24px; font-weight: bold; }
-        .stat-box .label { font-size: 11px; opacity: 0.8; }
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(255,107,53,0.4);
+        }
+        .btn:disabled { 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+            transform: none;
+            box-shadow: none;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+        }
+        .btn-secondary:hover {
+            box-shadow: 0 8px 25px rgba(0,78,137,0.4);
+        }
+        
+        .success { 
+            background: #E8F8F0; 
+            color: #27AE60; 
+            padding: 16px; 
+            border-radius: var(--radius-sm); 
+            text-align: center; 
+            display: none;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--success);
+        }
+        .error { 
+            background: #FDEDEC; 
+            color: #C0392B; 
+            padding: 16px; 
+            border-radius: var(--radius-sm); 
+            text-align: center; 
+            display: none;
+            margin-bottom: 16px;
+            border-left: 4px solid var(--danger);
+        }
+        .loading { 
+            display: none; 
+            text-align: center; 
+            color: var(--primary); 
+            padding: 20px;
+            font-weight: 600;
+        }
+        
+        .link-prof { 
+            text-align: center; 
+            margin-top: 24px; 
+            padding-bottom: 40px;
+        }
+        .link-prof a { 
+            color: rgba(255,255,255,0.8); 
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        .link-prof a:hover {
+            color: var(--primary);
+        }
+        
+        .tabs { 
+            display: flex; 
+            gap: 8px; 
+            margin-bottom: 20px; 
+            background: rgba(255,255,255,0.1);
+            padding: 6px;
+            border-radius: var(--radius);
+        }
+        .tab { 
+            flex: 1;
+            padding: 12px; 
+            background: transparent; 
+            border: none; 
+            border-radius: var(--radius-sm); 
+            cursor: pointer; 
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .tab.active { 
+            background: var(--primary); 
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255,107,53,0.3);
+        }
+        
+        .form-hidden { display: none; }
+        
+        .steps {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #E9ECEF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--gray);
+        }
+        .step.active {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: var(--white);
+        }
+        .step.completed {
+            background: var(--success);
+            color: var(--white);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: var(--gray);
+            font-size: 13px;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E9ECEF;
+        }
+        .divider span {
+            padding: 0 16px;
+        }
+        
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            color: var(--white);
+        }
+        .user-badge .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .user-badge .info h4 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .user-badge .info p {
+            font-size: 12px;
+            opacity: 0.8;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="logo">
+        <div class="header">
+            <div class="logo-icon">🔧</div>
             <h1>ConectaServicios</h1>
-            <p>Profesionales verificados en Los Teques</p>
+            <p>Profesionales verificados en Los Teques y alrededores</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="mostrarTab('cliente')" id="tab-cliente">👤 Soy Cliente</button>
+            <button class="tab" onclick="mostrarTab('profesional')" id="tab-profesional">👷 Soy Profesional</button>
         </div>
 
         <div class="stats">
@@ -67,89 +379,332 @@
             </div>
         </div>
 
-        <div class="card">
-            <h2>Solicitar un Servicio</h2>
-            <p>Completa el formulario y te contactamos por WhatsApp</p>
-            
-            <div class="success" id="msgSuccess">
-                Solicitud enviada! Te contactaremos pronto.
-                <br><small>Tu pedido #<span id="pedidoId"></span></small>
-            </div>
-            <div class="error" id="msgError">Hubo un error. Intenta de nuevo.</div>
-            <div class="loading" id="loading">Enviando...</div>
-
-            <form id="pedidoForm">
-                <label>Tu nombre completo</label>
-                <input type="text" id="nombre" placeholder="Ej: Maria Gonzalez" required>
-
-                <label>Telefono (WhatsApp)</label>
-                <input type="tel" id="telefono" placeholder="Ej: 0412-1234567" required>
-
-                <label>Tipo de servicio</label>
-                <div class="service-grid">
-                    <div class="service-item" onclick="selectService(this, 'Plomeria')">Plomeria</div>
-                    <div class="service-item" onclick="selectService(this, 'Electricidad')">Electricidad</div>
-                    <div class="service-item" onclick="selectService(this, 'Pintura')">Pintura</div>
-                    <div class="service-item" onclick="selectService(this, 'Jardineria')">Jardineria</div>
-                    <div class="service-item" onclick="selectService(this, 'Clases')">Clases</div>
-                    <div class="service-item" onclick="selectService(this, 'Tecnico')">Tecnico</div>
+        <div id="seccion-cliente">
+            <div id="cliente-no-registrado">
+                <div class="card">
+                    <h2>📝 Registro de Cliente</h2>
+                    <p>Crea tu cuenta para solicitar servicios y hacer seguimiento de tus pedidos</p>
+                    
+                    <div class="steps">
+                        <div class="step active" id="step1">1</div>
+                        <div class="step" id="step2">2</div>
+                        <div class="step" id="step3">3</div>
+                    </div>
+                    
+                    <div id="paso1">
+                        <label>Nombre completo *</label>
+                        <input type="text" id="regNombre" placeholder="Ej: Maria Gonzalez" required>
+                        
+                        <label>Cedula de identidad *</label>
+                        <input type="text" id="regCedula" placeholder="V-12345678" required>
+                        
+                        <label>Correo electronico</label>
+                        <input type="email" id="regEmail" placeholder="tu@email.com">
+                        
+                        <button class="btn" onclick="siguientePaso(2)">Continuar →</button>
+                    </div>
+                    
+                    <div id="paso2" class="form-hidden">
+                        <label>Telefono (WhatsApp) *</label>
+                        <input type="tel" id="regTelefono" placeholder="Ej: 0412-1234567" required>
+                        
+                        <label>Direccion completa *</label>
+                        <input type="text" id="regDireccion" placeholder="Calle, casa, sector..." required>
+                        
+                        <label>Zona / Sector *</label>
+                        <input type="text" id="regZona" placeholder="Ej: El Tambor, San Antonio..." required>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-outline" onclick="anteriorPaso(1)" style="flex: 1;">← Atras</button>
+                            <button class="btn" onclick="siguientePaso(3)" style="flex: 2;">Continuar →</button>
+                        </div>
+                    </div>
+                    
+                    <div id="paso3" class="form-hidden">
+                        <label>Crea una contrasena *</label>
+                        <input type="password" id="regPassword" placeholder="Minimo 6 caracteres" required>
+                        
+                        <label>Confirmar contrasena *</label>
+                        <input type="password" id="regPassword2" placeholder="Repite tu contrasena" required>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-weight: 400;">
+                            <input type="checkbox" id="regTerminos" style="width: auto;">
+                            Acepto los <a href="#" style="color: var(--primary);">Terminos y Condiciones</a>
+                        </label>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-outline" onclick="anteriorPaso(2)" style="flex: 1;">← Atras</button>
+                            <button class="btn" onclick="registrarCliente()" style="flex: 2;">✓ Completar Registro</button>
+                        </div>
+                    </div>
                 </div>
-                <input type="hidden" id="servicio" required>
+                
+                <div class="card" style="text-align: center;">
+                    <p style="margin-bottom: 16px;">¿Ya tienes cuenta?</p>
+                    <button class="btn btn-secondary" onclick="mostrarLogin()">Iniciar Sesion</button>
+                </div>
+            </div>
+            
+            <div id="cliente-registrado" class="form-hidden">
+                <div class="user-badge">
+                    <div class="avatar">👤</div>
+                    <div class="info">
+                        <h4 id="nombreCliente">Cliente</h4>
+                        <p>Bienvenido de vuelta</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <h2>📋 Solicitar un Servicio</h2>
+                    <p>Completa el formulario y te contactamos por WhatsApp en minutos</p>
+                    
+                    <div class="success" id="msgSuccess">
+                        ✅ ¡Solicitud enviada! Te contactaremos pronto.
+                        <br><small>Tu pedido #<span id="pedidoId"></span></small>
+                    </div>
+                    <div class="error" id="msgError">❌ Hubo un error. Intenta de nuevo.</div>
+                    <div class="loading" id="loading">⏳ Enviando...</div>
 
-                <label>Zona / Sector en Los Teques</label>
-                <input type="text" id="zona" placeholder="Ej: El Tambor, San Antonio..." required>
+                    <form id="pedidoForm">
+                        <label>Tipo de servicio *</label>
+                        <div class="service-grid">
+                            <div class="service-item" onclick="selectService(this, 'Plomeria')">🚿<br>Plomeria</div>
+                            <div class="service-item" onclick="selectService(this, 'Electricidad')">⚡<br>Electricidad</div>
+                            <div class="service-item" onclick="selectService(this, 'Pintura')">🎨<br>Pintura</div>
+                            <div class="service-item" onclick="selectService(this, 'Jardineria')">🌿<br>Jardineria</div>
+                            <div class="service-item" onclick="selectService(this, 'Clases')">📚<br>Clases</div>
+                            <div class="service-item" onclick="selectService(this, 'Tecnico')">🔧<br>Tecnico</div>
+                        </div>
+                        <input type="hidden" id="servicio" required>
 
-                <label>Fecha y hora que necesitas el servicio</label>
-                <input type="datetime-local" id="fechaServicio" required>
+                        <label>Fecha y hora que necesitas *</label>
+                        <input type="datetime-local" id="fechaServicio" required>
 
-                <label>Describe lo que necesitas</label>
-                <textarea id="descripcion" rows="3" placeholder="Ej: Tengo una fuga en el bano principal..." required></textarea>
+                        <label>Describe lo que necesitas *</label>
+                        <textarea id="descripcion" rows="3" placeholder="Ej: Tengo una fuga en el bano principal..." required></textarea>
 
-                <label>Presupuesto estimado (USD, opcional)</label>
-                <input type="number" id="presupuesto" placeholder="Ej: 20" min="1">
+                        <label>Presupuesto estimado (USD)</label>
+                        <input type="number" id="presupuesto" placeholder="Ej: 20" min="1">
 
-                <button type="submit" class="btn" id="btnEnviar">Enviar Solicitud</button>
-            </form>
+                        <button type="submit" class="btn" id="btnEnviar">📨 Enviar Solicitud</button>
+                    </form>
+                </div>
+                
+                <div class="card">
+                    <h2>📋 Mis Pedidos</h2>
+                    <div id="misPedidosLista">
+                        <p style="color: var(--gray); text-align: center; padding: 20px;">No tienes pedidos activos</p>
+                    </div>
+                </div>
+                
+                <button class="btn btn-outline" onclick="cerrarSesion()" style="margin-bottom: 20px;">Cerrar Sesion</button>
+            </div>
         </div>
 
-        <div class="card">
-            <h2>Eres profesional?</h2>
-            <p>Registrate gratis y recibe clientes. Solo pagas 15% por servicio completado.</p>
-            <button class="btn" onclick="mostrarFormProfesional()" style="background: #43a047;">Registrarme como Profesional</button>
-            
-            <div id="formProfesional" style="display:none; margin-top: 16px;">
-                <label>Nombre completo</label>
-                <input type="text" id="profNombre" placeholder="Tu nombre">
-                <label>Cedula de identidad</label>
-                <input type="text" id="profCedula" placeholder="V-12345678">
+        <div id="seccion-profesional" class="form-hidden">
+            <div class="card">
+                <h2>👷 Registro de Profesional</h2>
+                <p>Registrate gratis y recibe clientes. Solo pagas 15% por servicio completado.</p>
+                
+                <div class="success" id="msgSuccessProf" style="display: none;">
+                    ✅ ¡Registro enviado! Te contactaremos para verificacion.
+                </div>
+                
+                <label>Nombre completo *</label>
+                <input type="text" id="profNombre" placeholder="Tu nombre completo" required>
+                
+                <label>Cedula de identidad *</label>
+                <input type="text" id="profCedula" placeholder="V-12345678" required>
+                
+                <label>Telefono (WhatsApp) *</label>
+                <input type="tel" id="profTelefono" placeholder="0412-1234567" required>
+                
+                <label>Servicios que ofreces *</label>
+                <input type="text" id="profServicios" placeholder="Ej: Plomeria, Electricidad, Pintura" required>
+                
+                <label>Zona donde trabajas *</label>
+                <input type="text" id="profZona" placeholder="Ej: Los Teques, San Antonio, El Tambor" required>
+                
+                <label>Anos de experiencia</label>
+                <input type="number" id="profExperiencia" placeholder="Ej: 5" min="0">
+                
+                <button class="btn" onclick="registrarProfesional()">✅ Completar Registro</button>
+            </div>
+        </div>
+
+        <div id="loginModal" class="form-hidden">
+            <div class="card">
+                <h2>🔐 Iniciar Sesion</h2>
+                <p>Ingresa tus datos para acceder a tu cuenta</p>
+                
                 <label>Telefono</label>
-                <input type="tel" id="profTelefono" placeholder="0412-1234567">
-                <label>Servicios que ofreces</label>
-                <input type="text" id="profServicios" placeholder="Ej: Plomeria, Electricidad">
-                <label>Zona donde trabajas</label>
-                <input type="text" id="profZona" placeholder="Ej: Los Teques, San Antonio">
-                <button class="btn" onclick="registrarProfesional()">Completar Registro</button>
+                <input type="tel" id="loginTelefono" placeholder="0412-1234567">
+                
+                <label>Contrasena</label>
+                <input type="password" id="loginPassword" placeholder="Tu contrasena">
+                
+                <button class="btn" onclick="iniciarSesion()">Ingresar</button>
+                
+                <div class="divider"><span>o</span></div>
+                
+                <button class="btn btn-outline" onclick="ocultarLogin()">Crear cuenta nueva</button>
             </div>
         </div>
 
         <div class="link-prof">
-            <a href="admin.html">Panel de Administracion</a>
+            <a href="admin.html">🔐 Panel de Administracion</a>
         </div>
     </div>
 
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycbyz7ab-3wWH2qDfLjyS-d9e7aNdJMlsClXtVYYFHGsrGXLmc0oxV1I1N42pYqiMhZCOTQ/exec';
+        
         let servicioSeleccionado = '';
-
+        let clienteActual = null;
+        
+        window.onload = function() {
+            const sesion = localStorage.getItem('clienteSesion');
+            if (sesion) {
+                clienteActual = JSON.parse(sesion);
+                mostrarClienteRegistrado();
+            }
+            cargarStats();
+        };
+        
+        function mostrarTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            if (tab === 'cliente') {
+                document.getElementById('seccion-cliente').style.display = 'block';
+                document.getElementById('seccion-profesional').style.display = 'none';
+            } else {
+                document.getElementById('seccion-cliente').style.display = 'none';
+                document.getElementById('seccion-profesional').style.display = 'block';
+            }
+        }
+        
+        function siguientePaso(paso) {
+            if (paso === 2) {
+                if (!document.getElementById('regNombre').value || !document.getElementById('regCedula').value) {
+                    alert('Completa todos los campos obligatorios');
+                    return;
+                }
+            }
+            if (paso === 3) {
+                if (!document.getElementById('regTelefono').value || !document.getElementById('regDireccion').value) {
+                    alert('Completa todos los campos obligatorios');
+                    return;
+                }
+            }
+            
+            document.getElementById('paso1').classList.add('form-hidden');
+            document.getElementById('paso2').classList.add('form-hidden');
+            document.getElementById('paso3').classList.add('form-hidden');
+            
+            document.getElementById('paso' + paso).classList.remove('form-hidden');
+            
+            for (let i = 1; i <= 3; i++) {
+                const step = document.getElementById('step' + i);
+                step.classList.remove('active', 'completed');
+                if (i < paso) step.classList.add('completed');
+                if (i === paso) step.classList.add('active');
+            }
+        }
+        
+        function anteriorPaso(paso) {
+            siguientePaso(paso);
+        }
+        
+        function registrarCliente() {
+            const password = document.getElementById('regPassword').value;
+            const password2 = document.getElementById('regPassword2').value;
+            
+            if (password !== password2) {
+                alert('Las contrasenas no coinciden');
+                return;
+            }
+            if (password.length < 6) {
+                alert('La contrasena debe tener al menos 6 caracteres');
+                return;
+            }
+            if (!document.getElementById('regTerminos').checked) {
+                alert('Debes aceptar los terminos y condiciones');
+                return;
+            }
+            
+            const cliente = {
+                nombre: document.getElementById('regNombre').value,
+                cedula: document.getElementById('regCedula').value,
+                email: document.getElementById('regEmail').value,
+                telefono: document.getElementById('regTelefono').value,
+                direccion: document.getElementById('regDireccion').value,
+                zona: document.getElementById('regZona').value,
+                password: password,
+                fechaRegistro: new Date().toLocaleString()
+            };
+            
+            let clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+            clientes.push(cliente);
+            localStorage.setItem('clientes', JSON.stringify(clientes));
+            
+            localStorage.setItem('clienteSesion', JSON.stringify(cliente));
+            clienteActual = cliente;
+            
+            alert('✅ Registro exitoso! Bienvenido, ' + cliente.nombre);
+            mostrarClienteRegistrado();
+        }
+        
+        function mostrarClienteRegistrado() {
+            document.getElementById('cliente-no-registrado').style.display = 'none';
+            document.getElementById('cliente-registrado').style.display = 'block';
+            document.getElementById('nombreCliente').textContent = clienteActual.nombre;
+            cargarMisPedidos();
+        }
+        
+        function mostrarLogin() {
+            document.getElementById('loginModal').style.display = 'block';
+            document.getElementById('cliente-no-registrado').style.display = 'none';
+        }
+        
+        function ocultarLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('cliente-no-registrado').style.display = 'block';
+        }
+        
+        function iniciarSesion() {
+            const telefono = document.getElementById('loginTelefono').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            let clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+            const cliente = clientes.find(c => c.telefono === telefono && c.password === password);
+            
+            if (cliente) {
+                localStorage.setItem('clienteSesion', JSON.stringify(cliente));
+                clienteActual = cliente;
+                alert('Bienvenido, ' + cliente.nombre);
+                mostrarClienteRegistrado();
+            } else {
+                alert('Telefono o contrasena incorrectos');
+            }
+        }
+        
+        function cerrarSesion() {
+            localStorage.removeItem('clienteSesion');
+            clienteActual = null;
+            location.reload();
+        }
+        
         function selectService(element, servicio) {
             document.querySelectorAll('.service-item').forEach(el => el.classList.remove('selected'));
             element.classList.add('selected');
             document.getElementById('servicio').value = servicio;
             servicioSeleccionado = servicio;
         }
-
-        document.getElementById('pedidoForm').addEventListener('submit', async function(e) {
+        
+        document.getElementById('pedidoForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
             if (!servicioSeleccionado) {
                 alert('Por favor selecciona un tipo de servicio');
                 return;
@@ -167,49 +722,60 @@
 
             const datos = {
                 action: 'crearPedido',
-                nombre: document.getElementById('nombre').value,
-                telefono: document.getElementById('telefono').value,
+                nombre: clienteActual.nombre,
+                telefono: clienteActual.telefono,
                 servicio: servicioSeleccionado,
-                zona: document.getElementById('zona').value,
+                zona: clienteActual.zona,
                 fechaServicio: document.getElementById('fechaServicio').value,
                 descripcion: document.getElementById('descripcion').value,
                 presupuesto: document.getElementById('presupuesto').value
             };
 
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(datos)
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    document.getElementById('pedidoId').textContent = result.id;
-                    success.style.display = 'block';
-                    this.reset();
-                    document.querySelectorAll('.service-item').forEach(el => el.classList.remove('selected'));
-                    servicioSeleccionado = '';
-                } else {
-                    throw new Error(result.error);
-                }
-            } catch(err) {
-                let pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-                pedidos.push({...datos, fechaSolicitud: new Date().toLocaleString(), id: 'local-' + Date.now()});
-                localStorage.setItem('pedidos', JSON.stringify(pedidos));
-                success.innerHTML = 'Solicitud guardada (modo offline). Te contactaremos pronto.';
-                success.style.display = 'block';
-                this.reset();
-            } finally {
-                btn.disabled = false;
-                loading.style.display = 'none';
-            }
+            let pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+            const pedidoLocal = {...datos, fechaSolicitud: new Date().toLocaleString(), id: 'local-' + Date.now()};
+            pedidos.push(pedidoLocal);
+            localStorage.setItem('pedidos', JSON.stringify(pedidos));
+            
+            let misPedidos = JSON.parse(localStorage.getItem('misPedidos') || '[]');
+            misPedidos.push(pedidoLocal);
+            localStorage.setItem('misPedidos', JSON.stringify(misPedidos));
+
+            enviarDatos(datos);
+            
+            document.getElementById('pedidoId').textContent = pedidoLocal.id;
+            success.style.display = 'block';
+            this.reset();
+            document.querySelectorAll('.service-item').forEach(el => el.classList.remove('selected'));
+            servicioSeleccionado = '';
+            btn.disabled = false;
+            loading.style.display = 'none';
+            
+            cargarMisPedidos();
         });
-
-        function mostrarFormProfesional() {
-            document.getElementById('formProfesional').style.display = 'block';
+        
+        function cargarMisPedidos() {
+            const misPedidos = JSON.parse(localStorage.getItem('misPedidos') || '[]');
+            const contenedor = document.getElementById('misPedidosLista');
+            
+            if (misPedidos.length === 0) {
+                contenedor.innerHTML = '<p style="color: var(--gray); text-align: center; padding: 20px;">No tienes pedidos activos</p>';
+                return;
+            }
+            
+            contenedor.innerHTML = misPedidos.reverse().map(p => `
+                <div style="padding: 12px; border-bottom: 1px solid #E9ECEF;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong style="color: var(--dark);">${p.servicio}</strong>
+                            <p style="font-size: 12px; color: var(--gray); margin: 4px 0 0;">${p.fechaSolicitud}</p>
+                        </div>
+                        <span style="background: #FFF3E0; color: #E65100; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">PENDIENTE</span>
+                    </div>
+                </div>
+            `).join('');
         }
-
-        async function registrarProfesional() {
+        
+        function registrarProfesional() {
             const datos = {
                 action: 'registrarProfesional',
                 nombre: document.getElementById('profNombre').value,
@@ -218,41 +784,61 @@
                 servicios: document.getElementById('profServicios').value,
                 zona: document.getElementById('profZona').value
             };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(datos)
-                });
-                const result = await response.json();
-                alert(result.mensaje);
-                document.getElementById('formProfesional').style.display = 'none';
-            } catch(err) {
-                alert('Error al registrar. Intenta mas tarde.');
-            }
-        }
-
-        async function cargarStats() {
-            try {
-                const response = await fetch(API_URL + '?action=getPedidos');
-                const data = await response.json();
-                document.getElementById('statServicios').textContent = data.pedidos.length;
-                document.getElementById('statClientes').textContent = new Set(data.pedidos.map(p => p.telefono)).size;
-            } catch(e) {
-                const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
-                document.getElementById('statServicios').textContent = pedidos.length;
-            }
             
-            try {
-                const response = await fetch(API_URL + '?action=getProfesionales');
-                const data = await response.json();
-                document.getElementById('statProfesionales').textContent = data.profesionales.length;
-            } catch(e) {
-                document.getElementById('statProfesionales').textContent = '0';
+            if (!datos.nombre || !datos.cedula || !datos.telefono || !datos.servicios || !datos.zona) {
+                alert('Completa todos los campos obligatorios');
+                return;
             }
-        }
 
-        cargarStats();
+            enviarDatos(datos);
+            
+            document.getElementById('msgSuccessProf').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('profNombre').value = '';
+                document.getElementById('profCedula').value = '';
+                document.getElementById('profTelefono').value = '';
+                document.getElementById('profServicios').value = '';
+                document.getElementById('profZona').value = '';
+                document.getElementById('profExperiencia').value = '';
+                document.getElementById('msgSuccessProf').style.display = 'none';
+            }, 3000);
+        }
+        
+        function enviarDatos(datos) {
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = API_URL;
+            form.target = 'hidden-iframe';
+            
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'data';
+            input.value = JSON.stringify(datos);
+            form.appendChild(input);
+            
+            var iframe = document.createElement('iframe');
+            iframe.name = 'hidden-iframe';
+            iframe.style.display = 'none';
+            document.body.appendChild(iframe);
+            
+            document.body.appendChild(form);
+            form.submit();
+            
+            setTimeout(function() {
+                document.body.removeChild(form);
+                document.body.removeChild(iframe);
+            }, 2000);
+        }
+        
+        function cargarStats() {
+            const pedidos = JSON.parse(localStorage.getItem('pedidos') || '[]');
+            document.getElementById('statServicios').textContent = pedidos.length;
+            
+            const clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+            document.getElementById('statClientes').textContent = clientes.length;
+            
+            document.getElementById('statProfesionales').textContent = '0';
+        }
     </script>
 </body>
 </html>
